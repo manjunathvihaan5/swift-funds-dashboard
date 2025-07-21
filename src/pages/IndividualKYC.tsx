@@ -10,8 +10,9 @@ import { ArrowLeft, User, FileText, Shield, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const IndividualKYC = () => {
-  const [step, setStep] = useState<"pan" | "aadhaar-otp" | "processing" | "success" | "failed">("pan");
+  const [step, setStep] = useState<"pan" | "aadhaar" | "aadhaar-otp" | "processing" | "success" | "failed">("pan");
   const [pan, setPan] = useState("");
+  const [aadhaar, setAadhaar] = useState("");
   const [aadhaarOtp, setAadhaarOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { transactionId } = useParams();
@@ -21,10 +22,21 @@ const IndividualKYC = () => {
   const handlePanSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (pan.length === 10) {
-      setStep("aadhaar-otp");
+      setStep("aadhaar");
       toast({
         title: "PAN Verified",
-        description: "Aadhaar OTP sent to your registered mobile number",
+        description: "Please enter your Aadhaar number",
+      });
+    }
+  };
+
+  const handleAadhaarSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (aadhaar.length === 12) {
+      setStep("aadhaar-otp");
+      toast({
+        title: "Aadhaar Verified",
+        description: "OTP sent to your registered mobile number",
       });
     }
   };
@@ -61,6 +73,8 @@ const IndividualKYC = () => {
     switch (currentStep) {
       case "pan":
         return <FileText className="w-6 h-6" />;
+      case "aadhaar":
+        return <User className="w-6 h-6" />;
       case "aadhaar-otp":
         return <Shield className="w-6 h-6" />;
       case "processing":
@@ -72,11 +86,12 @@ const IndividualKYC = () => {
 
   const getProgressValue = () => {
     switch (step) {
-      case "pan": return 25;
-      case "aadhaar-otp": return 50;
-      case "processing": return 75;
+      case "pan": return 20;
+      case "aadhaar": return 40;
+      case "aadhaar-otp": return 60;
+      case "processing": return 80;
       case "success": return 100;
-      case "failed": return 50;
+      case "failed": return 60;
       default: return 0;
     }
   };
@@ -109,6 +124,7 @@ const IndividualKYC = () => {
               </div>
               <span className="text-sm font-medium text-foreground">
                 {step === "pan" && "PAN Verification"}
+                {step === "aadhaar" && "Aadhaar Number"}
                 {step === "aadhaar-otp" && "Aadhaar OTP"}
                 {step === "processing" && "Processing KYC"}
                 {step === "success" && "KYC Completed"}
@@ -158,6 +174,45 @@ const IndividualKYC = () => {
               </form>
             )}
 
+            {step === "aadhaar" && (
+              <form onSubmit={handleAadhaarSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="aadhaar" className="text-foreground/90">
+                    Aadhaar Number
+                  </Label>
+                  <Input
+                    id="aadhaar"
+                    type="text"
+                    placeholder="1234 5678 9012"
+                    value={aadhaar}
+                    onChange={(e) => setAadhaar(e.target.value.replace(/\D/g, ''))}
+                    className="bg-input/50 border-border/50 focus:border-primary transition-colors"
+                    maxLength={12}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Enter your 12-digit Aadhaar number
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setStep("pan")}
+                    className="flex-1 border-border/50"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-lg shadow-primary/30"
+                    disabled={aadhaar.length !== 12}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </form>
+            )}
+
             {step === "aadhaar-otp" && (
               <form onSubmit={handleAadhaarOtpSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -189,7 +244,7 @@ const IndividualKYC = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setStep("pan")}
+                    onClick={() => setStep("aadhaar")}
                     className="flex-1 border-border/50"
                   >
                     Back
@@ -257,6 +312,7 @@ const IndividualKYC = () => {
                     onClick={() => {
                       setStep("pan");
                       setPan("");
+                      setAadhaar("");
                       setAadhaarOtp("");
                     }}
                     className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"

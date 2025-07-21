@@ -20,6 +20,8 @@ interface Transaction {
   amount: number;
   currency: string;
   bankAccount: string;
+  accountNumber: string;
+  ifscCode: string;
   status: "pending" | "kyc_required" | "processing" | "completed" | "failed";
   date: string;
   senderName: string;
@@ -31,7 +33,9 @@ const mockTransactions: Transaction[] = [
     id: "TXN001",
     amount: 5000,
     currency: "USD",
-    bankAccount: "HDFC Bank - ***4521",
+    bankAccount: "HDFC Bank",
+    accountNumber: "****4521",
+    ifscCode: "HDFC0000123",
     status: "kyc_required",
     date: "2024-01-15",
     senderName: "Global Tech Corp",
@@ -41,7 +45,9 @@ const mockTransactions: Transaction[] = [
     id: "TXN002",
     amount: 2500,
     currency: "USD",
-    bankAccount: "ICICI Bank - ***7890",
+    bankAccount: "ICICI Bank",
+    accountNumber: "****7890",
+    ifscCode: "ICIC0000456",
     status: "pending",
     date: "2024-01-14",
     senderName: "Digital Solutions Ltd",
@@ -51,17 +57,57 @@ const mockTransactions: Transaction[] = [
     id: "TXN003",
     amount: 7500,
     currency: "USD",
-    bankAccount: "SBI - ***1234",
+    bankAccount: "SBI",
+    accountNumber: "****1234",
+    ifscCode: "SBIN0000789",
     status: "processing",
     date: "2024-01-13",
     senderName: "Innovation Inc",
     purpose: "Project Payment"
+  },
+  {
+    id: "TXN004",
+    amount: 3000,
+    currency: "USD",
+    bankAccount: "Axis Bank",
+    accountNumber: "****5678",
+    ifscCode: "UTIB0000321",
+    status: "completed",
+    date: "2024-01-12",
+    senderName: "Tech Innovations",
+    purpose: "Development Work"
+  },
+  {
+    id: "TXN005",
+    amount: 1200,
+    currency: "USD",
+    bankAccount: "Kotak Bank",
+    accountNumber: "****9876",
+    ifscCode: "KKBK0000654",
+    status: "failed",
+    date: "2024-01-11",
+    senderName: "Software Corp",
+    purpose: "Maintenance Services"
   }
 ];
 
 const Dashboard = () => {
   const [transactions] = useState<Transaction[]>(mockTransactions);
+  const [filter, setFilter] = useState<"all" | "active" | "pending" | "kyc">("all");
   const navigate = useNavigate();
+
+  const filteredTransactions = transactions.filter(transaction => {
+    switch (filter) {
+      case "active":
+        return ["pending", "kyc_required", "processing"].includes(transaction.status);
+      case "pending":
+        return transaction.status === "pending";
+      case "kyc":
+        return transaction.status === "kyc_required";
+      default:
+        return true; // Show all transactions
+    }
+  });
 
   const getStatusBadge = (status: Transaction["status"]) => {
     switch (status) {
@@ -110,9 +156,46 @@ const Dashboard = () => {
           <p className="text-muted-foreground">Track your international transfers and complete KYC</p>
         </div>
 
+        {/* Filter Buttons */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          <Button
+            variant={filter === "all" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter("all")}
+            className={filter === "all" ? "bg-primary text-primary-foreground" : "border-border/50 hover:bg-secondary/50"}
+          >
+            All Transfers
+          </Button>
+          <Button
+            variant={filter === "active" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter("active")}
+            className={filter === "active" ? "bg-accent text-accent-foreground" : "border-border/50 hover:bg-secondary/50"}
+          >
+            Active Transfers
+          </Button>
+          <Button
+            variant={filter === "pending" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter("pending")}
+            className={filter === "pending" ? "bg-neon-blue text-black" : "border-border/50 hover:bg-secondary/50"}
+          >
+            Total Pending
+          </Button>
+          <Button
+            variant={filter === "kyc" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter("kyc")}
+            className={filter === "kyc" ? "bg-neon-pink text-black" : "border-border/50 hover:bg-secondary/50"}
+          >
+            KYC Required
+          </Button>
+        </div>
+
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-border/50 shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all">
+          <Card className="border-border/50 shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all cursor-pointer"
+                onClick={() => setFilter("pending")}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -124,7 +207,8 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-border/50 shadow-lg shadow-neon-pink/10 hover:shadow-neon-pink/20 transition-all">
+          <Card className="border-border/50 shadow-lg shadow-neon-pink/10 hover:shadow-neon-pink/20 transition-all cursor-pointer"
+                onClick={() => setFilter("kyc")}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -136,12 +220,13 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-border/50 shadow-lg shadow-accent/10 hover:shadow-accent/20 transition-all">
+          <Card className="border-border/50 shadow-lg shadow-accent/10 hover:shadow-accent/20 transition-all cursor-pointer"
+                onClick={() => setFilter("active")}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Active Transfers</p>
-                  <p className="text-2xl font-bold text-accent">{transactions.length}</p>
+                  <p className="text-2xl font-bold text-accent">{transactions.filter(t => ["pending", "kyc_required", "processing"].includes(t.status)).length}</p>
                 </div>
                 <ArrowRight className="w-8 h-8 text-accent/70" />
               </div>
@@ -154,11 +239,16 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ArrowRight className="w-5 h-5 text-primary" />
-              Pending Transactions
+              {filter === "all" ? "All Transactions" : 
+               filter === "active" ? "Active Transactions" :
+               filter === "pending" ? "Pending Transactions" : "KYC Required"}
+              <Badge variant="secondary" className="ml-auto">
+                {filteredTransactions.length}
+              </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {transactions.map((transaction, index) => (
+            {filteredTransactions.map((transaction, index) => (
               <div
                 key={transaction.id}
                 className="p-4 rounded-lg border border-border/50 bg-card/50 hover:bg-card/70 transition-all animate-slide-up"
@@ -177,7 +267,11 @@ const Dashboard = () => {
                     <p className="text-xl font-bold text-primary">
                       ${transaction.amount.toLocaleString()} {transaction.currency}
                     </p>
-                    <p className="text-sm text-muted-foreground">{transaction.bankAccount}</p>
+                    <div className="space-y-1 text-sm text-muted-foreground">
+                      <p className="font-medium">{transaction.bankAccount}</p>
+                      <p>A/c: {transaction.accountNumber}</p>
+                      <p>IFSC: {transaction.ifscCode}</p>
+                    </div>
                   </div>
                 </div>
 
