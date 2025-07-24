@@ -318,6 +318,11 @@ const CompanyKYC = () => {
                   <p className="text-xs text-muted-foreground text-center">
                     OTP sent to authorized signatory's Aadhaar registered mobile
                   </p>
+                  <div className="mt-4 p-3 bg-muted/50 rounded-md border border-border/50">
+                    <p className="text-xs text-muted-foreground">
+                      By proceeding, I consent to the use of authorized signatory's Aadhaar number for KYC verification as per the regulations of UIDAI and RBI guidelines for international fund transfers.
+                    </p>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
