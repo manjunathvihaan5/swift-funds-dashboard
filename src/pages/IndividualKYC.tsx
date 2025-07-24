@@ -192,6 +192,11 @@ const IndividualKYC = () => {
                   <p className="text-xs text-muted-foreground">
                     Enter your 12-digit Aadhaar number
                   </p>
+                  <div className="mt-3 p-3 bg-muted/50 rounded-md border border-border/50">
+                    <p className="text-xs text-muted-foreground">
+                      By proceeding, I consent to the use of my Aadhaar number for KYC verification as per the regulations of UIDAI and RBI guidelines for international fund transfers.
+                    </p>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -239,11 +244,6 @@ const IndividualKYC = () => {
                   <p className="text-xs text-muted-foreground text-center">
                     OTP sent to your Aadhaar registered mobile number
                   </p>
-                  <div className="mt-4 p-3 bg-muted/50 rounded-md border border-border/50">
-                    <p className="text-xs text-muted-foreground">
-                      By proceeding, I consent to the use of my Aadhaar number for KYC verification as per the regulations of UIDAI and RBI guidelines for international fund transfers.
-                    </p>
-                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
