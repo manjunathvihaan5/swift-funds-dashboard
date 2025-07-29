@@ -265,7 +265,7 @@ const Dashboard = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold text-primary">
-                      ${transaction.amount.toLocaleString()} {transaction.currency}
+                      ₹{transaction.amount.toLocaleString()} {transaction.currency}
                     </p>
                     <div className="space-y-1 text-sm text-muted-foreground">
                       <p className="font-medium">{transaction.bankAccount}</p>
