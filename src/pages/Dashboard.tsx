@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
-  DollarSign, 
+  IndianRupee, 
   FileCheck, 
   Clock, 
   ArrowRight, 
@@ -200,9 +200,9 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Pending</p>
-                  <p className="text-2xl font-bold text-primary">${totalPending.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-primary">₹{totalPending.toLocaleString()}</p>
                 </div>
-                <DollarSign className="w-8 h-8 text-primary/70" />
+                <IndianRupee className="w-8 h-8 text-primary/70" />
               </div>
             </CardContent>
           </Card>
