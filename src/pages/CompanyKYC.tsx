@@ -241,7 +241,7 @@ const CompanyKYC = () => {
                   />
                   <div className="mt-3 p-3 bg-muted/50 rounded-md border border-border/50">
                     <p className="text-xs text-muted-foreground">
-                      By proceeding, I consent to the use of authorized signatory's Aadhaar number for KYC verification as per the regulations of UIDAI and RBI guidelines for international fund transfers.
+                      I consent to use my Aadhaar number and OTP for identity verification as per UIDAI guidelines.
                     </p>
                   </div>
                 </div>
