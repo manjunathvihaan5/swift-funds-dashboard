@@ -185,14 +185,6 @@ const TransactionTracking = () => {
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-muted-foreground">Amount</p>
-                <p className="font-semibold text-primary">{mockTransactionDetails.amount} {mockTransactionDetails.currency}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Exchange Rate</p>
-                <p className="font-medium">{mockTransactionDetails.exchangeRate}</p>
-              </div>
-              <div>
                 <p className="text-muted-foreground">From</p>
                 <p className="font-medium">{mockTransactionDetails.senderName}</p>
               </div>
@@ -200,13 +192,9 @@ const TransactionTracking = () => {
                 <p className="text-muted-foreground">To</p>
                 <p className="font-medium">{mockTransactionDetails.bankAccount}</p>
               </div>
-              <div>
+              <div className="col-span-2">
                 <p className="text-muted-foreground">Purpose</p>
                 <p className="font-medium">{mockTransactionDetails.purpose}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Net Amount</p>
-                <p className="font-semibold text-accent">{mockTransactionDetails.netAmount}</p>
               </div>
             </div>
           </CardContent>
