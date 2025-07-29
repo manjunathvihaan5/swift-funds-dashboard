@@ -260,7 +260,7 @@ const Dashboard = () => {
                       <h3 className="font-semibold text-foreground">{transaction.senderName}</h3>
                       {getStatusBadge(transaction.status)}
                     </div>
-                    <p className="text-sm text-muted-foreground">{transaction.purpose}</p>
+                    
                     <p className="text-xs text-muted-foreground">{transaction.date}</p>
                   </div>
                   <div className="text-right">
