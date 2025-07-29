@@ -153,7 +153,7 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             Fund Transfer Dashboard
           </h1>
-          <p className="text-muted-foreground">Track your international transfers and complete KYC</p>
+          <p className="text-muted-foreground">Track your remittances and complete KYC</p>
         </div>
 
         {/* Filter Buttons */}
