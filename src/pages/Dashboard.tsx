@@ -201,7 +201,7 @@ const Dashboard = () => {
             Fund Transfer Dashboard
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Secure, fast, and transparent international money transfers with real-time tracking
+            Track your remittances and complete KYC
           </p>
         </div>
 
