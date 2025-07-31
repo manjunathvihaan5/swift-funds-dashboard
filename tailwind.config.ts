@@ -52,26 +52,19 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Brand colors for modern vibrant design
-				brand: {
-					primary: 'hsl(var(--brand-primary))',
-					secondary: 'hsl(var(--brand-secondary))',
-					tertiary: 'hsl(var(--brand-tertiary))',
-					quaternary: 'hsl(var(--brand-quaternary))'
-				},
-				// Status colors - vibrant and clear
-				success: 'hsl(var(--success))',
-				warning: 'hsl(var(--warning))',
-				error: 'hsl(var(--error))',
-				info: 'hsl(var(--info))',
-				// Neon accent colors for interactive elements
-				'neon-green': 'hsl(var(--neon-green))',
-				'neon-blue': 'hsl(var(--neon-blue))',
-				'neon-pink': 'hsl(var(--neon-pink))',
-				'neon-cyan': 'hsl(var(--neon-cyan))',
-				'neon-yellow': 'hsl(var(--neon-yellow))',
-				'neon-purple': 'hsl(var(--neon-purple))',
-				'neon-orange': 'hsl(var(--neon-orange))',
+				// Trust & Safety colors - minimal professional palette
+				trust: 'hsl(var(--trust-blue))',
+				safety: 'hsl(var(--safety-green))',
+				// Status colors - clean and clear
+				success: 'hsl(var(--safety-green))',
+				warning: 'hsl(var(--warning-amber))',
+				error: 'hsl(var(--error-red))',
+				// Action highlights for user interactions
+				'action-primary': 'hsl(var(--action-primary))',
+				'action-success': 'hsl(var(--action-success))',
+				'action-warning': 'hsl(var(--action-warning))',
+				// Input styling
+				'input-focus': 'hsl(var(--input-focus))',
 				// Sidebar colors
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -110,11 +103,7 @@ export default {
 				'brand': 'var(--shadow-colored)'
 			},
 			backgroundImage: {
-				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-secondary': 'var(--gradient-secondary)',
-				'gradient-success': 'var(--gradient-success)',
-				'gradient-warning': 'var(--gradient-warning)',
-				'gradient-brand': 'var(--gradient-brand)'
+				'gradient-trust': 'linear-gradient(135deg, hsl(var(--trust-blue)) 0%, hsl(var(--safety-green)) 100%)'
 			},
 			keyframes: {
 				'accordion-down': {
