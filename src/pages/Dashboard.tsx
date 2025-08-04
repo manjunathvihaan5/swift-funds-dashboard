@@ -30,6 +30,7 @@ interface Transaction {
   date: string;
   senderName: string;
   purpose: string;
+  bankUTR?: string;
 }
 
 const mockTransactions: Transaction[] = [
@@ -79,7 +80,8 @@ const mockTransactions: Transaction[] = [
     status: "completed",
     date: "2024-01-12",
     senderName: "Tech Innovations",
-    purpose: "Development Work"
+    purpose: "Development Work",
+    bankUTR: "HDFC240112UTR001234"
   },
   {
     id: "TXN005",
@@ -98,6 +100,7 @@ const mockTransactions: Transaction[] = [
 const Dashboard = () => {
   const [transactions] = useState<Transaction[]>(mockTransactions);
   const [filter, setFilter] = useState<"all" | "active" | "pending" | "kyc">("all");
+  const [isKYCCompleted] = useState(true); // Mock KYC status
   const navigate = useNavigate();
 
   const filteredTransactions = transactions.filter(transaction => {
@@ -150,14 +153,11 @@ const Dashboard = () => {
         );
       case "processing":
         return (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="p-2 bg-trust rounded-md">
               <TrendingUp className="w-4 h-4 text-white" />
             </div>
-            <div className="space-y-1">
-              <span className="text-sm font-medium text-trust">Processing transfer</span>
-              <Progress value={60} className="w-20 h-2 bg-muted" />
-            </div>
+            <span className="text-sm font-medium text-trust">Processing transfer</span>
           </div>
         );
       case "completed":
@@ -209,19 +209,68 @@ const Dashboard = () => {
             <div className="flex justify-center items-center gap-8 text-sm text-muted-foreground mt-8">
               <div className="flex items-center gap-2">
                 <Shield className="h-4 w-4 text-trust" />
-                <span>Bank Grade Security</span>
+                <span>Secure Transfers</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-safety" />
-                <span>RBI Authorized</span>
+                <span>Licensed Provider</span>
               </div>
               <div className="flex items-center gap-2">
                 <Lock className="h-4 w-4 text-trust" />
-                <span>256-bit Encryption</span>
+                <span>Data Protection</span>
               </div>
             </div>
           </div>
         </div>
+
+        {/* KYC Profile Section */}
+        {isKYCCompleted && (
+          <Card className="border-2 border-safety shadow-lg bg-gradient-to-r from-safety/5 to-trust/5">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3 text-lg">
+                <div className="p-2 bg-safety rounded-lg">
+                  <CheckCircle2 className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-foreground">KYC Profile</span>
+                <Badge className="bg-safety text-white px-3 py-1">Verified</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h4 className="font-medium text-foreground">Personal Details</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Name:</span>
+                      <span className="font-medium">John Doe</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">PAN:</span>
+                      <span className="font-medium">ABCDE1234F</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Aadhaar:</span>
+                      <span className="font-medium">****-****-9012</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <h4 className="font-medium text-foreground">Connected Companies</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Primary:</span>
+                      <span className="font-medium">Tech Innovations Ltd</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Status:</span>
+                      <Badge className="bg-safety text-white px-2 py-0 text-xs">Verified</Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Clean Filter Buttons */}
         <div className="flex gap-3 overflow-x-auto pb-2 justify-center">
@@ -235,17 +284,6 @@ const Dashboard = () => {
             }`}
           >
             All Transfers
-          </Button>
-          <Button
-            variant={filter === "active" ? "default" : "outline"}
-            onClick={() => setFilter("active")}
-            className={`px-6 py-2 text-sm font-medium rounded-lg transition-all duration-200 border ${
-              filter === "active" 
-                ? "bg-primary text-white border-primary shadow-sm" 
-                : "bg-white text-foreground border-border hover:border-primary hover:text-primary"
-            }`}
-          >
-            Active Transfers
           </Button>
           <Button
             variant={filter === "pending" ? "default" : "outline"}
@@ -272,51 +310,66 @@ const Dashboard = () => {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="border-2 border-border shadow-md hover:shadow-lg transition-all cursor-pointer"
                 onClick={() => setFilter("pending")}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-accent rounded-lg">
-                  <IndianRupee className="w-6 h-6 text-primary" />
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-accent rounded-lg">
+                  <IndianRupee className="w-5 h-5 text-primary" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Pending</p>
-                <p className="text-3xl font-bold text-foreground">₹{totalPending.toLocaleString()}</p>
-                <p className="text-sm text-muted-foreground">Awaiting processing</p>
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Pending</p>
+                <p className="text-2xl font-bold text-foreground">₹{totalPending.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">Awaiting processing</p>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-2 border-action-warning shadow-md hover:shadow-lg transition-all cursor-pointer"
                 onClick={() => setFilter("kyc")}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-amber-100 rounded-lg">
-                  <FileCheck className="w-6 h-6 text-action-warning" />
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-amber-100 rounded-lg">
+                  <FileCheck className="w-5 h-5 text-action-warning" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">KYC Required</p>
-                <p className="text-3xl font-bold text-action-warning">{kycRequired}</p>
-                <p className="text-sm text-muted-foreground">Identity verification needed</p>
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">KYC Required</p>
+                <p className="text-2xl font-bold text-action-warning">{kycRequired}</p>
+                <p className="text-xs text-muted-foreground">Identity verification needed</p>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-2 border-border shadow-md hover:shadow-lg transition-all cursor-pointer"
                 onClick={() => setFilter("active")}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <ArrowRight className="w-6 h-6 text-safety" />
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <ArrowRight className="w-5 h-5 text-safety" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Active Transfers</p>
-                <p className="text-3xl font-bold text-safety">{transactions.filter(t => ["pending", "kyc_required", "processing"].includes(t.status)).length}</p>
-                <p className="text-sm text-muted-foreground">In progress</p>
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Active Transfers</p>
+                <p className="text-2xl font-bold text-safety">{transactions.filter(t => ["pending", "kyc_required", "processing"].includes(t.status)).length}</p>
+                <p className="text-xs text-muted-foreground">In progress</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 border-border shadow-md hover:shadow-lg transition-all cursor-pointer">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Completed</p>
+                <p className="text-2xl font-bold text-blue-600">{transactions.filter(t => t.status === "completed").length}</p>
+                <p className="text-xs text-muted-foreground">Successfully transferred</p>
               </div>
             </CardContent>
           </Card>
@@ -382,6 +435,11 @@ const Dashboard = () => {
                       <span className="text-sm font-medium text-muted-foreground">
                         Transaction ID: {transaction.id}
                       </span>
+                      {transaction.bankUTR && (
+                        <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                          Bank UTR: {transaction.bankUTR}
+                        </span>
+                      )}
                     </div>
                   </div>
 

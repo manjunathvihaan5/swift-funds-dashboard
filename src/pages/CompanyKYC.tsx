@@ -8,7 +8,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Building2, FileText, Shield, CheckCircle2, User } from "lucide-react";
+import { ArrowLeft, Building2, FileText, Shield, CheckCircle2, User, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface CompanyKYCData {
@@ -16,22 +16,29 @@ interface CompanyKYCData {
   gst: string;
   cin: string;
   signatoryPan: string;
+  signatoryAadhaar: string;
   aadhaarOtp: string;
   isNRE: boolean;
   declarationAccepted: boolean;
+  isPanPrefilled?: boolean;
+  isAadhaarPrefilled?: boolean;
 }
 
 const CompanyKYC = () => {
   const [step, setStep] = useState<"company-details" | "signatory" | "aadhaar-otp" | "processing" | "success" | "failed">("company-details");
   const [formData, setFormData] = useState<CompanyKYCData>({
-    companyPan: "",
+    companyPan: "ABCDE1234F", // Prefilled
     gst: "",
     cin: "",
-    signatoryPan: "",
+    signatoryPan: "FGHIJ5678K", // Prefilled  
+    signatoryAadhaar: "123456789012", // Prefilled
     aadhaarOtp: "",
     isNRE: false,
-    declarationAccepted: false
+    declarationAccepted: false,
+    isPanPrefilled: true,
+    isAadhaarPrefilled: true
   });
+  const [showErrorFlow, setShowErrorFlow] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { transactionId } = useParams();
   const navigate = useNavigate();
@@ -50,7 +57,7 @@ const CompanyKYC = () => {
 
   const handleSignatorySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.signatoryPan.length === 10 && formData.declarationAccepted) {
+    if (formData.signatoryPan.length === 10 && formData.signatoryAadhaar.length === 12 && formData.declarationAccepted) {
       setStep("aadhaar-otp");
       toast({
         title: "Signatory Details Verified",
@@ -173,15 +180,28 @@ const CompanyKYC = () => {
                   <Label htmlFor="companyPan" className="text-foreground/90">
                     Company PAN
                   </Label>
-                  <Input
-                    id="companyPan"
-                    type="text"
-                    placeholder="ABCDE1234F"
-                    value={formData.companyPan}
-                    onChange={(e) => updateFormData("companyPan", e.target.value.toUpperCase())}
-                    className="bg-input/50 border-border/50 focus:border-primary transition-colors"
-                    maxLength={10}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="companyPan"
+                      type="text"
+                      placeholder="ABCDE1234F"
+                      value={formData.companyPan}
+                      onChange={(e) => updateFormData("companyPan", e.target.value.toUpperCase())}
+                      className={`${formData.isPanPrefilled ? 'bg-muted/50 cursor-not-allowed' : 'bg-input/50'} border-border/50 focus:border-primary transition-colors`}
+                      maxLength={10}
+                      disabled={formData.isPanPrefilled}
+                    />
+                    {formData.isPanPrefilled && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <CheckCircle2 className="w-4 h-4 text-safety" />
+                      </div>
+                    )}
+                  </div>
+                  {formData.isPanPrefilled && (
+                    <p className="text-xs text-muted-foreground bg-safety/10 p-2 rounded border">
+                      ✓ Company PAN verified and prefilled
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -230,20 +250,88 @@ const CompanyKYC = () => {
                   <Label htmlFor="signatoryPan" className="text-foreground/90">
                     Authorized Signatory PAN
                   </Label>
-                  <Input
-                    id="signatoryPan"
-                    type="text"
-                    placeholder="ABCDE1234F"
-                    value={formData.signatoryPan}
-                    onChange={(e) => updateFormData("signatoryPan", e.target.value.toUpperCase())}
-                    className="bg-input/50 border-border/50 focus:border-primary transition-colors"
-                    maxLength={10}
-                  />
-                  <div className="mt-3 p-3 bg-muted/50 rounded-md border border-border/50">
-                    <p className="text-xs text-muted-foreground">
-                      I consent to use my Aadhaar number and OTP for identity verification as per UIDAI guidelines.
-                    </p>
+                  <div className="relative">
+                    <Input
+                      id="signatoryPan"
+                      type="text"
+                      placeholder="ABCDE1234F"
+                      value={formData.signatoryPan}
+                      onChange={(e) => updateFormData("signatoryPan", e.target.value.toUpperCase())}
+                      className={`${formData.isPanPrefilled ? 'bg-muted/50 cursor-not-allowed' : 'bg-input/50'} border-border/50 focus:border-primary transition-colors`}
+                      maxLength={10}
+                      disabled={formData.isPanPrefilled}
+                    />
+                    {formData.isPanPrefilled && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <CheckCircle2 className="w-4 h-4 text-safety" />
+                      </div>
+                    )}
                   </div>
+                  {formData.isPanPrefilled && (
+                    <p className="text-xs text-muted-foreground bg-safety/10 p-2 rounded border">
+                      ✓ PAN verified and prefilled from your profile
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signatoryAadhaar" className="text-foreground/90">
+                    Authorized Signatory Aadhaar Number
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="signatoryAadhaar"
+                      type="text"
+                      placeholder="123456789012"
+                      value={formData.signatoryAadhaar}
+                      onChange={(e) => updateFormData("signatoryAadhaar", e.target.value)}
+                      className={`${formData.isAadhaarPrefilled ? 'bg-muted/50 cursor-not-allowed' : 'bg-input/50'} border-border/50 focus:border-primary transition-colors`}
+                      maxLength={12}
+                      disabled={formData.isAadhaarPrefilled}
+                    />
+                    {formData.isAadhaarPrefilled && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <CheckCircle2 className="w-4 h-4 text-safety" />
+                      </div>
+                    )}
+                  </div>
+                  {formData.isAadhaarPrefilled && (
+                    <p className="text-xs text-muted-foreground bg-safety/10 p-2 rounded border">
+                      ✓ Aadhaar verified and prefilled from your profile
+                    </p>
+                  )}
+                </div>
+
+                {showErrorFlow && (
+                  <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertCircle className="w-4 h-4 text-destructive" />
+                      <span className="text-sm font-medium text-destructive">Document Mismatch Detected</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      The PAN and Aadhaar details don't match our records. Please contact customer support for assistance.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="border-destructive text-destructive hover:bg-destructive hover:text-white"
+                      onClick={() => {
+                        toast({
+                          title: "Support Request Initiated",
+                          description: "Our team will contact you within 24 hours to resolve this issue.",
+                        });
+                      }}
+                    >
+                      Contact Customer Support
+                    </Button>
+                  </div>
+                )}
+
+                <div className="mt-3 p-3 bg-muted/50 rounded-md border border-border/50">
+                  <p className="text-xs text-muted-foreground">
+                    I consent to use my Aadhaar number and OTP for identity verification as per UIDAI guidelines.
+                  </p>
                 </div>
 
                 <div className="space-y-4">
@@ -284,11 +372,19 @@ const CompanyKYC = () => {
                   <Button
                     type="submit"
                     className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
-                    disabled={formData.signatoryPan.length !== 10 || !formData.declarationAccepted}
+                    disabled={formData.signatoryPan.length !== 10 || formData.signatoryAadhaar.length !== 12 || !formData.declarationAccepted}
                   >
                     Continue
                   </Button>
                 </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowErrorFlow(!showErrorFlow)}
+                  className="w-full border-border/50 text-xs"
+                >
+                  Report Issue with Documents
+                </Button>
               </form>
             )}
 
@@ -396,13 +492,16 @@ const CompanyKYC = () => {
                     onClick={() => {
                       setStep("company-details");
                       setFormData({
-                        companyPan: "",
+                        companyPan: "ABCDE1234F",
                         gst: "",
                         cin: "",
-                        signatoryPan: "",
+                        signatoryPan: "FGHIJ5678K",
+                        signatoryAadhaar: "123456789012",
                         aadhaarOtp: "",
                         isNRE: false,
-                        declarationAccepted: false
+                        declarationAccepted: false,
+                        isPanPrefilled: true,
+                        isAadhaarPrefilled: true
                       });
                     }}
                     className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
